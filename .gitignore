@@ -1,0 +1,205 @@
+# ============================================================================
+# .GITIGNORE - Privacy Protection for Your Project
+# ============================================================================
+# This file tells Git: "Don't share these files on GitHub!"
+# Think of it as: "Don't post my house keys or passwords online"
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# TERRAFORM STATE FILES (CONTAINS SENSITIVE INFO!)
+# ----------------------------------------------------------------------------
+# These files contain the current state of your infrastructure
+# They may include passwords, IP addresses, and other secrets
+
+*.tfstate
+*.tfstate.*
+
+# Explanation:
+# - .tfstate files track what's currently deployed in AWS
+# - They contain REAL resource IDs, IPs, sometimes passwords
+# - NEVER share these on GitHub - hackers love them!
+# - Keep them local or in secure remote backends (S3 with encryption)
+
+# ----------------------------------------------------------------------------
+# CRASH LOG FILES
+# ----------------------------------------------------------------------------
+crash.log
+crash.*.log
+
+# These are created if Terraform crashes
+# They might contain sensitive information from your configuration
+
+# ----------------------------------------------------------------------------
+# TERRAFORM VARIABLE FILES (YOUR SECRETS!)
+# ----------------------------------------------------------------------------
+*.tfvars
+*.tfvars.json
+
+# Explanation:
+# - .tfvars files often contain:
+#   - AWS credentials
+#   - Database passwords
+#   - API keys
+#   - Personal settings
+# - Sharing these = giving away your passwords!
+
+# Exception: You might want to share .tfvars.example (template without real values)
+!*.tfvars.example
+!terraform.tfvars.example
+
+# ----------------------------------------------------------------------------
+# TERRAFORM OVERRIDES
+# ----------------------------------------------------------------------------
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# These are used for local testing
+# Should not be shared as they're personal customizations
+
+# ----------------------------------------------------------------------------
+# TERRAFORM CLI CONFIGURATION
+# ----------------------------------------------------------------------------
+.terraformrc
+terraform.rc
+
+# These contain personal Terraform settings
+# Might include API tokens for Terraform Cloud
+
+# ----------------------------------------------------------------------------
+# TERRAFORM DIRECTORIES
+# ----------------------------------------------------------------------------
+.terraform/
+
+# Explanation:
+# - This folder contains downloaded provider plugins (huge files!)
+# - It's recreated by 'terraform init' - no need to share
+# - Typically 100s of MB - too big for Git
+
+# Lock file (you SHOULD commit this one - it's safe!)
+# .terraform.lock.hcl  <-- DON'T ignore this! Keep it!
+
+# ----------------------------------------------------------------------------
+# IDE AND EDITOR FILES
+# ----------------------------------------------------------------------------
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ----------------------------------------------------------------------------
+# OPERATING SYSTEM FILES
+# ----------------------------------------------------------------------------
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+.directory
+
+# ----------------------------------------------------------------------------
+# BACKUP FILES
+# ----------------------------------------------------------------------------
+*.backup
+*.bak
+*.orig
+
+# ----------------------------------------------------------------------------
+# LOG FILES
+# ----------------------------------------------------------------------------
+*.log
+
+# ----------------------------------------------------------------------------
+# TEMPORARY FILES
+# ----------------------------------------------------------------------------
+*.tmp
+.tmp/
+tmp/
+
+# ----------------------------------------------------------------------------
+# AWS CREDENTIALS (EXTRA SAFETY!)
+# ----------------------------------------------------------------------------
+*credentials*
+*aws_access_key*
+*aws_secret_key*
+
+# Just in case someone accidentally names a file with credentials
+
+# ----------------------------------------------------------------------------
+# TERRAFORM PLAN OUTPUT
+# ----------------------------------------------------------------------------
+*.tfplan
+*.tfplan.json
+
+# Plan files can contain sensitive data
+# Generate them fresh each time instead of committing
+
+# ----------------------------------------------------------------------------
+# TERRAFORM GRAPH OUTPUT
+# ----------------------------------------------------------------------------
+*.png
+*.svg
+graph.dot
+
+# Unless you specifically want to commit architecture diagrams
+# But usually these are generated on-demand
+
+# ============================================================================
+# WHAT YOU SHOULD COMMIT TO GIT
+# ============================================================================
+# ✅ DO commit:
+# - *.tf files (main.tf, variables.tf, outputs.tf)
+# - .terraform.lock.hcl
+# - README.md
+# - .gitignore (this file)
+# - *.tfvars.example (template files)
+# 
+# ❌ DON'T commit:
+# - *.tfstate (state files)
+# - *.tfvars (variable files with real values)
+# - .terraform/ (plugin directory)
+# - Credentials or secrets
+# ============================================================================
+
+# ============================================================================
+# SECURITY BEST PRACTICES
+# ============================================================================
+# 1. NEVER commit credentials
+# 2. Use .tfvars.example files as templates
+# 3. Store secrets in:
+#    - AWS Secrets Manager
+#    - HashiCorp Vault
+#    - Environment variables
+# 4. Use remote state with encryption (S3 + DynamoDB)
+# 5. Enable MFA for AWS accounts
+# 6. Review changes before 'git add'
+# ============================================================================

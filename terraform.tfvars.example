@@ -1,0 +1,170 @@
+# ============================================================================
+# TERRAFORM.TFVARS.EXAMPLE - Template for Customization
+# ============================================================================
+# This is a TEMPLATE file showing you how to customize your VPC
+# 
+# HOW TO USE:
+# 1. Copy this file: cp terraform.tfvars.example terraform.tfvars
+# 2. Edit terraform.tfvars with YOUR values
+# 3. Run: terraform apply
+# 
+# Note: terraform.tfvars is in .gitignore, so your secrets stay private!
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# BASIC SETTINGS
+# ----------------------------------------------------------------------------
+
+# Which AWS region to build in?
+# Options: us-east-1, us-west-2, eu-west-1, ap-southeast-1, etc.
+aws_region = "us-east-1"
+
+# What environment is this? (helps with organization)
+# Options: dev, staging, prod, test
+environment = "dev"
+
+# Your project/company name (all resources will be named: yourname-vpc-a, etc.)
+project_name = "clarus"
+
+# ----------------------------------------------------------------------------
+# VPC CONFIGURATION
+# ----------------------------------------------------------------------------
+
+# VPC CIDR block - the IP address range for your entire VPC
+# Default: 10.7.0.0/16 gives you 65,536 IP addresses
+# 
+# Common options:
+# - 10.0.0.0/16  = 65,536 IPs (most common)
+# - 10.0.0.0/8   = 16,777,216 IPs (very large)
+# - 172.16.0.0/16 = 65,536 IPs (alternative private range)
+# - 192.168.0.0/16 = 65,536 IPs (home network range)
+vpc_cidr = "10.7.0.0/16"
+
+# ----------------------------------------------------------------------------
+# SUBNET CONFIGURATION
+# ----------------------------------------------------------------------------
+
+# Public subnet CIDR blocks (these get internet access)
+# Each /24 gives you 256 IPs (251 usable, AWS reserves 5)
+# 
+# Why these specific numbers?
+# - 10.7.1.0/24  = IPs from 10.7.1.0 to 10.7.1.255
+# - 10.7.4.0/24  = IPs from 10.7.4.0 to 10.7.4.255
+# - 10.7.7.0/24  = IPs from 10.7.7.0 to 10.7.7.255
+# 
+# (We skip .3.0, .6.0 to leave room for growth)
+public_subnet_cidrs = [
+  "10.7.1.0/24",   # AZ 1a - Public
+  "10.7.4.0/24",   # AZ 1b - Public
+  "10.7.7.0/24",   # AZ 1c - Public
+]
+
+# Private subnet CIDR blocks (NO direct internet access = secure)
+# Use these for databases, backend servers, internal services
+private_subnet_cidrs = [
+  "10.7.2.0/24",   # AZ 1a - Private
+  "10.7.5.0/24",   # AZ 1b - Private
+  "10.7.8.0/24",   # AZ 1c - Private
+]
+
+# ----------------------------------------------------------------------------
+# AVAILABILITY ZONE CONFIGURATION
+# ----------------------------------------------------------------------------
+
+# How many Availability Zones to use?
+# More AZs = higher availability but higher cost
+# 
+# - 2 AZs = Good for dev/test
+# - 3 AZs = Best for production (AWS recommended)
+# - 1 AZ  = Only for learning/testing (not recommended)
+azs_count = 3
+
+# ----------------------------------------------------------------------------
+# DNS CONFIGURATION
+# ----------------------------------------------------------------------------
+
+# Enable DNS hostnames? (give instances friendly names)
+# true = Instances get names like: ec2-12-34-56-78.compute-1.amazonaws.com
+# false = Only IP addresses
+enable_dns_hostnames = true
+
+# Enable DNS resolution inside VPC?
+# Keep this true unless you have a very specific reason
+enable_dns_support = true
+
+# ----------------------------------------------------------------------------
+# RESOURCE TAGGING
+# ----------------------------------------------------------------------------
+
+# Additional tags to apply to ALL resources
+# Tags help you:
+# - Track costs (filter by CostCenter)
+# - Organize resources (filter by Environment)
+# - Automate tasks (backup all "Production" tagged resources)
+tags = {
+  Terraform   = "true"
+  Project     = "VPC-Hands-On"
+  CostCenter  = "Engineering"
+  Owner       = "DevOps-Team"
+  CreatedBy   = "YourName"
+}
+
+# ----------------------------------------------------------------------------
+# ADVANCED SETTINGS
+# ----------------------------------------------------------------------------
+
+# Instance tenancy
+# "default" = Share AWS hardware (cheaper, normal)
+# "dedicated" = Get your own physical server (EXPENSIVE! For compliance only)
+instance_tenancy = "default"
+
+# ============================================================================
+# EXAMPLE CUSTOMIZATIONS FOR DIFFERENT SCENARIOS
+# ============================================================================
+
+# -------------------------------------------
+# SCENARIO 1: Production Environment
+# -------------------------------------------
+# aws_region           = "us-east-1"
+# environment          = "prod"
+# project_name         = "mycompany"
+# vpc_cidr             = "10.0.0.0/16"
+# public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+# private_subnet_cidrs = ["10.0.11.0/24", "10.0.12.0/24", "10.0.13.0/24"]
+# azs_count            = 3
+
+# -------------------------------------------
+# SCENARIO 2: Development Environment (Smaller, Cheaper)
+# -------------------------------------------
+# aws_region           = "us-west-2"
+# environment          = "dev"
+# project_name         = "mycompany-dev"
+# vpc_cidr             = "10.10.0.0/16"
+# public_subnet_cidrs  = ["10.10.1.0/24", "10.10.2.0/24"]
+# private_subnet_cidrs = ["10.10.11.0/24", "10.10.12.0/24"]
+# azs_count            = 2  # Only 2 AZs for dev to save money
+
+# -------------------------------------------
+# SCENARIO 3: Multi-Region Setup (Europe)
+# -------------------------------------------
+# aws_region           = "eu-west-1"  # Ireland
+# environment          = "prod"
+# project_name         = "mycompany-eu"
+# vpc_cidr             = "10.20.0.0/16"
+# public_subnet_cidrs  = ["10.20.1.0/24", "10.20.2.0/24", "10.20.3.0/24"]
+# private_subnet_cidrs = ["10.20.11.0/24", "10.20.12.0/24", "10.20.13.0/24"]
+# azs_count            = 3
+
+# ============================================================================
+# COMMON IP RANGE PLANNING
+# ============================================================================
+# 
+# If you're building multiple VPCs, plan your IP ranges carefully:
+# 
+# Production:  10.0.0.0/16   (10.0.0.0   - 10.0.255.255)
+# Staging:     10.10.0.0/16  (10.10.0.0  - 10.10.255.255)
+# Development: 10.20.0.0/16  (10.20.0.0  - 10.20.255.255)
+# Testing:     10.30.0.0/16  (10.30.0.0  - 10.30.255.255)
+# 
+# This prevents IP conflicts if you ever need to connect VPCs (VPC Peering)
+# ============================================================================
